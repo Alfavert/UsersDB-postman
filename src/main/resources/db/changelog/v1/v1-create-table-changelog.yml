@@ -1,0 +1,45 @@
+databaseChangeLog:
+  - changeSet:
+      id: v1-1
+      author: Elbek Ganiev
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            tableExists:
+              tableName: UsersDB
+      changes:
+        - createTable:
+            tableName: UsersDB
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+                  autoIncrement: true
+              - column:
+                  name: FullName
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: email
+                  type: varchar(254)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: password
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+  - changeSet:
+      id: v1-2
+      author: Elbek Ganiev
+      preConditions:
+        - onFail: MARK_RAN
+          tableIsEmpty:
+            tableName: UsersDB
+      changes:
+        - loadData:
+            tableName: UsersDB
+            file: db/user-data.csv
