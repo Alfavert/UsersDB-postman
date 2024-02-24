@@ -1,8 +1,8 @@
 package Usersdbgradle.controllers;
-import Usersdbgradle.models.UsersDB;
+import Usersdbgradle.models.UsersDB3;
 import Usersdbgradle.repo.UsersDBRepo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
+import org.springframework.http.MediaType;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,29 +11,31 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-
-public class mainController {
+public class MainController {
 
     @Autowired
     private UsersDBRepo usersRepository;
 
- //   @GetMapping("/users")
- // List<UsersDB> all(){return usersRepository.findAll();}
+    @GetMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<UsersDB3> all() {
+        return usersRepository.findAll();
+    }
+
     @GetMapping("/")
-    public String UsersMain(Model model) {
-        Iterable<UsersDB> users = usersRepository.findAll();
+    public String usersMain(Model model) {
+        Iterable<UsersDB3> users = usersRepository.findAll();
         model.addAttribute("users", users);
         return "users";
     }
 
     @GetMapping("/add-user")
-    public String UsersAdd(Model model) {
+    public String usersAdd(Model model) {
         return "user-add";
     }
 
     @PostMapping("/add-user")
     public String userPostAdd(@RequestParam String FullName, @RequestParam String email, @RequestParam String password, Model model) {
-        UsersDB user = new UsersDB(FullName, email, password);
+        UsersDB3 user = new UsersDB3(FullName, email, password);
         usersRepository.save(user);
         return "redirect:/";
     }
@@ -43,8 +45,8 @@ public class mainController {
         if (!usersRepository.existsById(id)) {
             return "redirect:/";
         } else {
-            Optional<UsersDB> user = usersRepository.findById(id);
-            ArrayList<UsersDB> res = new ArrayList<>();
+            Optional<UsersDB3> user = usersRepository.findById(id);
+            ArrayList<UsersDB3> res = new ArrayList<>();
             user.ifPresent(res::add);
             model.addAttribute("user", res);
             return "user-details";
@@ -56,8 +58,8 @@ public class mainController {
         if (!usersRepository.existsById(id)) {
             return "redirect:/";
         } else {
-            Optional<UsersDB> user = usersRepository.findById(id);
-            ArrayList<UsersDB> res = new ArrayList<>();
+            Optional<UsersDB3> user = usersRepository.findById(id);
+            ArrayList<UsersDB3> res = new ArrayList<>();
             user.ifPresent(res::add);
             model.addAttribute("user", res);
             return "user-edit";
@@ -66,7 +68,7 @@ public class mainController {
 
     @PostMapping("/{id}/edit")
     public String userUpdate(@PathVariable(value = "id") long id,@RequestParam String FullName, @RequestParam String email, @RequestParam String password, Model model) {
-        UsersDB user = usersRepository.findById(id).orElseThrow();
+        UsersDB3 user = usersRepository.findById(id).orElseThrow();
         user.setEmail(email);
         user.setFullName(FullName);
         user.setPassword(password);
@@ -75,7 +77,7 @@ public class mainController {
     }
     @PostMapping("/{id}/remove")
     public String userDelete(@PathVariable(value = "id") long id, Model model) {
-        UsersDB user = usersRepository.findById(id).orElseThrow();
+        UsersDB3 user = usersRepository.findById(id).orElseThrow();
         usersRepository.delete(user);
         return "redirect:/";
     }

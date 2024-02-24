@@ -23,8 +23,8 @@ configurations {
 }
 
 repositories {
-	mavenCentral()
 	mavenLocal()
+	mavenCentral()
 }
 
 tasks.withType(JavaCompile).configureEach {

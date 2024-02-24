@@ -1,8 +1,10 @@
 package Usersdbgradle.repo;
 
-import Usersdbgradle.models.UsersDB;
-import org.springframework.data.repository.CrudRepository;
+import Usersdbgradle.models.UsersDB3;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-public interface UsersDBRepo extends CrudRepository<UsersDB, Long> {
+@Repository
+public interface UsersDBRepo extends JpaRepository<UsersDB3, Long> {
 
 }

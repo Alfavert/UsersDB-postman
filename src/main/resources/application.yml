@@ -1,8 +1,30 @@
 spring:
+
+  jpa:
+    show_sql: false
+    open-in-view: false
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        format_sql: false
+        dialect: org.hibernate.dialect.PostgreSQL92Dialect
+
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/UsersDB-Task
+    url: jdbc:postgresql://localhost:5432/UsersDB2
     username: postgres
     password: password
+    hikari:
+      poolName: Hikari
+      driver-class-name: org.postgresql.Driver
+      auto-commit: true
+      connection-timeout: 120000
+      max-lifetime: 90000
+      idle-timeout: 60000
+      maximum-pool-size: 10
+      minimum-idle: 1
+      schema: public
+
   liquibase:
     change-log: db/changelog/main-changelog.yml
