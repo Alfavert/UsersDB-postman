@@ -1,14 +1,19 @@
 plugins {
-	id 'java'
-	id 'org.springframework.boot' version '3.2.3'
-	id 'io.spring.dependency-management' version '1.1.4'
+	id "java"
+	id "org.springframework.boot" version "2.7.11"
+	id "io.spring.dependency-management" version "1.1.4"
+	id "org.liquibase.gradle" version "2.1.1"
 }
 
-group = 'uz.User'
-version = '0.0.1-SNAPSHOT'
+group = "uz.User"
+version = "0.0.1-SNAPSHOT"
 
 java {
-	sourceCompatibility = '17'
+	sourceCompatibility = JavaVersion.VERSION_18
+	targetCompatibility = JavaVersion.VERSION_18
+	toolchain {
+		languageVersion.set(JavaLanguageVersion.of(18))
+	}
 }
 
 configurations {
@@ -19,19 +24,37 @@ configurations {
 
 repositories {
 	mavenCentral()
+	mavenLocal()
+}
+
+tasks.withType(JavaCompile).configureEach {
+	options.encoding = "UTF-8"
+	options.release = 18
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.liquibase:liquibase-core'
-	compileOnly 'org.projectlombok:lombok'
-	developmentOnly 'org.springframework.boot:spring-boot-devtools'
-	runtimeOnly 'org.postgresql:postgresql'
-	annotationProcessor 'org.projectlombok:lombok'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+	// spring
+	implementation "org.springframework.boot:spring-boot-starter-data-jpa:2.7.11"
+	implementation "org.springframework.boot:spring-boot-starter-web:2.7.11"
+	developmentOnly "org.springframework.boot:spring-boot-devtools:2.7.11"
+	testImplementation "org.springframework.boot:spring-boot-starter-test:2.7.11"
+	annotationProcessor "org.springframework.boot:spring-boot-configuration-processor:2.7.11"
+
+	// liquibase
+	implementation "org.liquibase:liquibase-core:4.14.0"
+	implementation "com.github.blagerweij:liquibase-sessionlock:1.5.3"
+
+	// lombok
+	compileOnly "org.projectlombok:lombok:1.18.30"
+	annotationProcessor "org.projectlombok:lombok:1.18.30"
+	
+	// postgresql
+	runtimeOnly "org.postgresql:postgresql:42.6.0"
+
 }
 
-tasks.named('test') {
+
+tasks.named("test") {
 	useJUnitPlatform()
 }
