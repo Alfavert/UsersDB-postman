@@ -1,6 +1,7 @@
 package Usersdbgradle.controllers;
 import Usersdbgradle.models.UsersDB3;
 import Usersdbgradle.repo.UsersDBRepo;
+import Usersdbgradle.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.ui.Model;
@@ -15,70 +16,35 @@ public class MainController {
 
     @Autowired
     private UsersDBRepo usersRepository;
+    @Autowired
+    private UserService userService;
 
-    @GetMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/api/users", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<UsersDB3> all() {
         return usersRepository.findAll();
     }
 
-    @GetMapping("/")
-    public String usersMain(Model model) {
-        Iterable<UsersDB3> users = usersRepository.findAll();
-        model.addAttribute("users", users);
-        return "users";
+    @PostMapping("/api/addUser")
+    public UsersDB3 postDetails(@RequestBody UsersDB3 user) {
+        return userService.saveDetails(user);
     }
 
-    @GetMapping("/add-user")
-    public String usersAdd(Model model) {
-        return "user-add";
+    @PostMapping("/api/addUserList")
+    public List<UsersDB3> postDetails(@RequestBody List<UsersDB3> users) {
+        return userService.saveListDetails(users);
     }
 
-    @PostMapping("/add-user")
-    public String userPostAdd(@RequestParam String FullName, @RequestParam String email, @RequestParam String password, Model model) {
-        UsersDB3 user = new UsersDB3(FullName, email, password);
-        usersRepository.save(user);
-        return "redirect:/";
+    @DeleteMapping("/api/deleteUser/{id}")
+    public String deleteDetails(@PathVariable long id) {
+        return userService.deleteStudent(id);
     }
 
-    @GetMapping("/{id}")
-    public String UsersDetails(@PathVariable(value = "id") long id, Model model) {
-        if (!usersRepository.existsById(id)) {
-            return "redirect:/";
-        } else {
-            Optional<UsersDB3> user = usersRepository.findById(id);
-            ArrayList<UsersDB3> res = new ArrayList<>();
-            user.ifPresent(res::add);
-            model.addAttribute("user", res);
-            return "user-details";
-        }
+    @PutMapping("/api/editUser")
+    public UsersDB3 updateUserDetails(@RequestBody UsersDB3 user) {
+        return userService.updateDetails(user);
     }
-
-    @GetMapping("/{id}/edit")
-    public String UsersEdit(@PathVariable(value = "id") long id, Model model) {
-        if (!usersRepository.existsById(id)) {
-            return "redirect:/";
-        } else {
-            Optional<UsersDB3> user = usersRepository.findById(id);
-            ArrayList<UsersDB3> res = new ArrayList<>();
-            user.ifPresent(res::add);
-            model.addAttribute("user", res);
-            return "user-edit";
-        }
-    }
-
-    @PostMapping("/{id}/edit")
-    public String userUpdate(@PathVariable(value = "id") long id,@RequestParam String FullName, @RequestParam String email, @RequestParam String password, Model model) {
-        UsersDB3 user = usersRepository.findById(id).orElseThrow();
-        user.setEmail(email);
-        user.setFullName(FullName);
-        user.setPassword(password);
-        usersRepository.save(user);
-        return "redirect:/";
-    }
-    @PostMapping("/{id}/remove")
-    public String userDelete(@PathVariable(value = "id") long id, Model model) {
-        UsersDB3 user = usersRepository.findById(id).orElseThrow();
-        usersRepository.delete(user);
-        return "redirect:/";
+    @GetMapping(value = "/api/getUserById/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public UsersDB3 fetchUserDetails(@PathVariable long id){
+        return userService.getUserDetailsById(id);
     }
 }

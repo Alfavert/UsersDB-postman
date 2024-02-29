@@ -1,13 +1,13 @@
 package Usersdbgradle.models;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Setter
 @Getter
 @Entity
+@Data
 @Table(name = "users")
 public class UsersDB3 {
 
