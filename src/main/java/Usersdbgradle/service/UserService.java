@@ -11,6 +11,9 @@ import java.util.List;
 public class UserService {
     @Autowired
     private UsersDBRepo usersRepo;
+    public List<UsersDB3> getDetails() {
+        return usersRepo.findAll();
+    }
     public UsersDB3 saveDetails(UsersDB3 user){ return usersRepo.save(user); }
     public List<UsersDB3> saveListDetails(List<UsersDB3> users){ return usersRepo.saveAll(users); }
     public String deleteStudent(long id){

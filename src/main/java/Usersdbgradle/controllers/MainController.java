@@ -20,8 +20,8 @@ public class MainController {
     private UserService userService;
 
     @GetMapping(value = "/api/users", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<UsersDB3> all() {
-        return usersRepository.findAll();
+    public List<UsersDB3> getDetails() {
+        return userService.getDetails();
     }
 
     @PostMapping("/api/addUser")
