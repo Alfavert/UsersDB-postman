@@ -2,9 +2,13 @@ package Usersdbgradle.service;
 
 import Usersdbgradle.models.UsersDB3;
 import Usersdbgradle.repo.UsersDBRepo;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 @Service
@@ -50,5 +54,21 @@ public class UserService {
     public UsersDB3 getUserDetailsById(long id) {
         return usersRepo.findById(id).orElse(null);
 
+    }
+    public List<UsersDB3> readFromJson(){
+        ObjectMapper mapper = new ObjectMapper();
+        TypeReference<List<UsersDB3>> typeReference = new TypeReference<List<UsersDB3>>(){};
+        InputStream inputStream = TypeReference.class.getResourceAsStream("/db/user-data.json");
+
+// чтобы не вносить в бд достаточно убрать то что ниже, оставив только 'users ='
+
+        try {
+            List<UsersDB3> users = mapper.readValue(inputStream,typeReference);
+            saveListDetails(users);
+            System.out.println("Users Saved!");
+        } catch (IOException e){
+            System.out.println("Unable to save users: " + e.getMessage());
+        }
+        return usersRepo.findAll();
     }
 }

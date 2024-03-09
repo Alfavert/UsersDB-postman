@@ -7,9 +7,13 @@ import org.springframework.http.MediaType;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RestController
 public class MainController {
@@ -47,4 +51,23 @@ public class MainController {
     public UsersDB3 fetchUserDetails(@PathVariable long id){
         return userService.getUserDetailsById(id);
     }
+    @GetMapping(value = "/api/writeJson", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<UsersDB3> writeToDbJson(){
+        return userService.readFromJson();
+    }
+    @GetMapping("/api/allUsers")
+    public List<UsersDB3> getAllUsers() {
+        List<UsersDB3> users = userService.getDetails();
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.writeValue(new File("src\\main\\resources\\json\\allUsers.json"), users);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return Collections.emptyList();
+        }
+        return users;
+    }
+
+
 }
+
