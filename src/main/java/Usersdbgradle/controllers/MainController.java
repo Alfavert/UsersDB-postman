@@ -51,8 +51,8 @@ public class MainController {
     public UsersDB3 fetchUserDetails(@PathVariable long id){
         return userService.getUserDetailsById(id);
     }
-    @GetMapping(value = "/api/writeJson", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<UsersDB3> writeToDbJson(){
+    @GetMapping(value = "/api/readFromJson", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<UsersDB3> readFromJson(){
         return userService.readFromJson();
     }
     @GetMapping("/api/allUsers")

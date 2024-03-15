@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -55,18 +56,26 @@ public class UserService {
         return usersRepo.findById(id).orElse(null);
 
     }
-    public List<UsersDB3> readFromJson(){
+
+    public List<UsersDB3> readFromJson() {
         ObjectMapper mapper = new ObjectMapper();
-        TypeReference<List<UsersDB3>> typeReference = new TypeReference<List<UsersDB3>>(){};
+        TypeReference<List<UsersDB3>> typeReference = new TypeReference<List<UsersDB3>>() {
+        };
         InputStream inputStream = TypeReference.class.getResourceAsStream("/db/user-data.json");
 
-// чтобы не вносить в бд достаточно убрать то что ниже, оставив только 'users ='
-
         try {
-            List<UsersDB3> users = mapper.readValue(inputStream,typeReference);
-            saveListDetails(users);
+            List<UsersDB3> users = mapper.readValue(inputStream, typeReference);
+            for (UsersDB3 user : users) {
+                Optional<UsersDB3> existingUser = usersRepo.findById(user.getId());
+                if (existingUser.isPresent()) {
+                    System.out.println("User with id " + user.getId() + " already exists. Skipping save.");
+                } else {
+                    usersRepo.save(user);
+                    System.out.println("User with id " + user.getId() + " saved!");
+                }
+            }
             System.out.println("Users Saved!");
-        } catch (IOException e){
+        } catch (IOException e) {
             System.out.println("Unable to save users: " + e.getMessage());
         }
         return usersRepo.findAll();

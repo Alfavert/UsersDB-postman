@@ -6,9 +6,11 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.*;
 
 public class UserServiceTest {
@@ -37,6 +39,53 @@ public class UserServiceTest {
         assertEquals(actualUsers, expectedUsers);
 
     }
+    @Test
+    void testSaveDetails_NewUser() {
+        UsersDB3 newUser = new UsersDB3(111L ,"111", "John Doe", "john@example.com");
+        when(usersRepo.findById(111L)).thenReturn(Optional.empty());
+        when(usersRepo.save(newUser)).thenReturn(newUser);
 
+        UsersDB3 savedUser = userService.saveDetails(newUser);
 
+        verify(usersRepo).findById(111L);
+        verify(usersRepo).save(newUser);
+        assertEquals(newUser, savedUser);
+    }
+
+    @Test
+    void testSaveDetails_ExistingUser() {
+        UsersDB3 existingUser = new UsersDB3(222L,"222", "Jane Doe", "jane@example.com");
+        when(usersRepo.findById(222L)).thenReturn(Optional.of(existingUser));
+
+        UsersDB3 savedUser = userService.saveDetails(existingUser);
+
+        verify(usersRepo).findById(222L);
+        verify(usersRepo, never()).save(existingUser);
+        assertNull(savedUser);
+    }
+
+    @Test
+    public void testDeleteStudent_ExistingId() {
+        long existingId = 123L;
+        when(usersRepo.existsById(existingId)).thenReturn(true);
+
+        String result = userService.deleteStudent(existingId);
+
+        verify(usersRepo).existsById(existingId);
+        verify(usersRepo).deleteById(existingId);
+        assertEquals("deleted" + existingId, result);
+    }
+
+    @Test
+    public void testDeleteStudent_NonExistingId() {
+        long nonExistingId = 456L;
+        when(usersRepo.existsById(nonExistingId)).thenReturn(false);
+
+        String result = userService.deleteStudent(nonExistingId);
+
+        verify(usersRepo).existsById(nonExistingId);
+        verify(usersRepo, never()).deleteById(nonExistingId);
+        assertEquals("ID is not existing", result);
+    }
 }
+
