@@ -13,8 +13,8 @@ spring:
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://localhost:5432/UsersDB2
-    username: postgres
-    password: password
+    username: Elbek-G
+    password: 123
     hikari:
       poolName: Hikari
       driver-class-name: org.postgresql.Driver
