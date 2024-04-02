@@ -4,6 +4,7 @@ import Usersdbgradle.models.UsersDB3;
 import Usersdbgradle.repo.UsersDBRepo;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -68,7 +69,10 @@ public class UserService {
             for (UsersDB3 user : users) {
                 Optional<UsersDB3> existingUser = usersRepo.findById(user.getId());
                 if (existingUser.isPresent()) {
-                    System.out.println("User with id " + user.getId() + " already exists. Skipping save.");
+                    UsersDB3 exUser = existingUser.get();
+                    //System.out.println("User with id " + user.getId() + " already exists. Skipping save.");
+                    BeanUtils.copyProperties(user, exUser, "id");
+                    usersRepo.save(exUser);
                 } else {
                     usersRepo.save(user);
                     System.out.println("User with id " + user.getId() + " saved!");
